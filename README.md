@@ -1,4 +1,7 @@
-
+# Wilson lab fork of Contrastive Unpaired Translation (CUT)
+Modifications:
+* work with grayscale source and target images
+* (in progress) train on paired image data, like pix2pix.
 
 # Contrastive Unpaired Translation (CUT)
 
