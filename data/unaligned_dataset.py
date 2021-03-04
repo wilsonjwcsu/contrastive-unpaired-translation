@@ -36,6 +36,8 @@ class UnalignedDataset(BaseDataset):
         self.B_paths = sorted(make_dataset(self.dir_B, opt.max_dataset_size))    # load images from '/path/to/data/trainB'
         self.A_size = len(self.A_paths)  # get the size of dataset A
         self.B_size = len(self.B_paths)  # get the size of dataset B
+        self.input_nc = opt.input_nc
+        self.output_nc = opt.output_nc
 
     def __getitem__(self, index):
         """Return a data point and its metadata information.
@@ -64,7 +66,7 @@ class UnalignedDataset(BaseDataset):
 #        print('current_epoch', self.current_epoch)
         is_finetuning = self.opt.isTrain and self.current_epoch > self.opt.n_epochs
         modified_opt = util.copyconf(self.opt, load_size=self.opt.crop_size if is_finetuning else self.opt.load_size)
-        transform = get_transform(modified_opt)
+        transform = get_transform(modified_opt, grayscale= (self.input_nc==1))
         A = transform(A_img)
         B = transform(B_img)
 
