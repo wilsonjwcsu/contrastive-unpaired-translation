@@ -24,6 +24,7 @@ class CUTModel(BaseModel):
         parser.add_argument('--lambda_GAN', type=float, default=1.0, help='weight for GAN loss：GAN(G(X))')
         parser.add_argument('--lambda_NCE', type=float, default=1.0, help='weight for NCE loss: NCE(G(X), X)')
         parser.add_argument('--nce_idt', type=util.str2bool, nargs='?', const=True, default=False, help='use NCE loss for identity mapping: NCE(G(Y), Y))')
+        parser.add_argument('--nce_paired', type=util.str2bool, nargs='?', const=True, default=False, help='calculate NCE loss between fake_B and real_B')
         parser.add_argument('--nce_layers', type=str, default='0,4,8,12,16', help='compute NCE loss on which layers')
         parser.add_argument('--nce_includes_all_negatives_from_minibatch',
                             type=util.str2bool, nargs='?', const=True, default=False,
@@ -182,7 +183,10 @@ class CUTModel(BaseModel):
             self.loss_G_GAN = 0.0
 
         if self.opt.lambda_NCE > 0.0:
-            self.loss_NCE = self.calculate_NCE_loss(self.real_A, self.fake_B)
+            if self.opt.nce_paired:
+                self.loss_NCE = self.calculate_NCE_loss(self.real_B, self.fake_B)
+            else:
+                self.loss_NCE = self.calculate_NCE_loss(self.real_A, self.fake_B)
         else:
             self.loss_NCE, self.loss_NCE_bd = 0.0, 0.0
 
